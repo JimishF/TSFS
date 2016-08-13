@@ -16,15 +16,20 @@ int toAZindex(char c)
     return c;
 }
 
-
-void multiply(int a[4][4],int b[4][4],int mult[4][4])
-{
-    int i,j,k;
-    
+void copy4x4( int a[4][4], int b[4][4]){
+    int i,j;
     for(i=0; i<4;i++)
         for(j=0; j<4; j++)
-            mult[i][j] = 0;
-        
+            a[i][j] = b[i][j];
+}
+
+
+void multiply(int mult[4][4], int a[4][4],int b[4][4])
+{
+    int i,j,k;       
+    for(i=0; i<4;i++)
+        for(j=0; j<4; j++)
+             mult[i][j] = 0;
 
     for(i=0; i<4;i++)
         for(j=0; j<4; j++)
@@ -34,7 +39,7 @@ void multiply(int a[4][4],int b[4][4],int mult[4][4])
 }
 
 
-void show4x4(int tmp[4][4]){
+void showInt4x4(int tmp[4][4]){
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -43,5 +48,4 @@ void show4x4(int tmp[4][4]){
             }
             printf("\n");
         }
-
 }

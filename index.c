@@ -9,25 +9,58 @@ char k3[] = "9CC98A29456677A6";
  *
  *
  *	- Needed Matrices
- * 	int key[1][4][4], key[2][4][4], key[3][4][4];
- * 	int key[10][4][4], key[11][4][4], key[12][4][4], key[13][4][4];
- * 	int key[20][4][4], key[21][4][4], key[22][4][4], key[23][4][4];
- * 	int key[30][4][4], key[31][4][4], key[32][4][4], key[33][4][4];
+ * 	 key[ 1  ][4][4], key[ 2  ][4][4], key[ 3  ][4][4];
+ * 	 key[ 10 ][4][4], key[ 11 ][4][4], key[ 12 ][4][4], key[ 13 ][4][4];
+ * 	 key[ 20 ][4][4], key[ 21 ][4][4], key[ 22 ][4][4], key[ 23 ][4][4];
+ * 	 key[ 30 ][4][4], key[ 31 ][4][4], key[ 32 ][4][4], key[ 33 ][4][4];
  *
  */
 
 // *  Last index needed is "33", so size will be 33
 int key[34][4][4];
 
-int zigZagIndex[4][4];
+/**
+ *
+ * Making zigzag index array
+ */
+
+int zigZagIndex[4][4] = 
+		{ 
+	 		{ 0, 1,	 5,	 6	},	
+		 	{ 2, 4,	 7,	 12	},	
+		 	{ 3, 8,	 11, 13	},	
+		 	{ 9, 10, 14, 15	}	
+	 	};
+
+// * temporary 4x4 sometimes needed
+int tmp[4][4];
 
 char plainText[] = "ASDF48723498";
 
+// * text 4x4, Matrix will used in every step operation
+// * initailezd with PT
+int text[4][4];
+int currentKeys[2];
+
 int main(int argc, char const *argv[])
 {	
-	int i, j, m, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi;
+	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi, position, tmp[4][4];
+	d = 4;
 
-	m = 4;
+/**
+ *
+ * PlainText to 2D Array;
+ * Currently taking PT.lngth < 16  
+ *
+ */
+	for ( i = 0; plainText[i] != '\0'; i++)
+	{
+		ti = i / 4;
+		tj = i % 4;
+		text[ ti ][ tj ] = 	plainText[i];
+	}
+
+
 /**
  *
  * KEY EXPANSION
@@ -90,30 +123,67 @@ int main(int argc, char const *argv[])
 		}
 
 
+	 
 
-	/**
-	 *
-	 * Making zigzag index array
-	 *	0	1	5	6	
-	 *	2	4	7	12	
-	 *	3	8	11	13	
-	 *	9	10	14	15	
-	 *
-	 */
+	
+/*==================================================================
+=			      Algo Starts (1 itteration of TSFS)		  	   =
+==================================================================*/
 
-		for (i = n = 0; i < m * 2; i++)
+/**
+ *
+ * TRANSPOSITION
+ *
+ */
+
+ 		copy4x4( tmp, text );
+
+ 		for ( i = 0; i < 4; i++)
 		{
-			for (j = (i < m) ? 0 : i-m+1; j <= i && j < m; j++)
-			{	
-				zi = (i&1)? j*(m-1)+i : (i-j)*m+j;
-				ti = zi / 4;
-				tj = zi % 4;
-				zigZagIndex[ ti ][ tj ] = n++;
+			for ( j = 0; j < 4; j++)
+			{
+				// Positiom represents which index element should be here at I J
+				// It fetches from zigZagIndex martix 
+				position = 	zigZagIndex[ i ][ j ];
+				ti = position / 4;
+				tj = position % 4;
+				text [ ti ][ tj ] = tmp[i][j];
 			}
-
 		}
 
-	show4x4( key[21] );
+
+/**
+ *
+ * SUBSTITUTION
+ *
+ */
+	showInt4x4( text );
+
+ 	// Current keys will be changed Round by Round
+	 	currentKeys[0] = 10;
+	 	currentKeys[1] = 11;
+		M = 26;
+
+			printf("\n");
+
+ 		for ( i = 0; i < 4; i++)
+		{
+			for ( j = 0; j < 4; j++)
+			{
+								
+//			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
+				// text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
+				// printf("%d \t", ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M );
+				printf("%d \t",( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ); 
+
+
+			}
+			printf("\n");
+		}
+			printf("\n");
+
+	showInt4x4( text );
+
 
 	return 0;
 }
