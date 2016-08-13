@@ -53,8 +53,12 @@ int charStatus [4][4];
 
 int main(int argc, char const *argv[])
 {	
-	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi, position, tempInt, shiftMargin;
+	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10;
+	int zi, position, tempInt, shiftMargin, RI, RJ, RX;
+	
 	d = 4;
+	RI = 1; RJ = 0;
+
 
 /**
  *
@@ -141,6 +145,51 @@ int main(int argc, char const *argv[])
 
 /**
  *
+ * GET TWO KEYS SHOULD BE USED IN THIS ROUND
+ * ---------------------------------------------
+ * 	initial RI =1 & RJ = 0'
+ *	RX will be 1*10 +0 = 10
+ * 	cunrrentKeys should be taken as 10 & RX+1 = 11
+ * --------------
+ *	In other case if RJ == 4 && RI = 1 then 
+ *	Current key will be fine but 
+ *	Next key must be taken as 20
+ *	to do so, set RJ = 0 & RI ++;
+ *	and recalculate : (RI*10)+RJ = (2*10)+0 = 20
+ * --------------
+ * 	In case of Last round, we will neec next key = 10
+ *  For that We will just ReInitialize RI to 0
+ *
+ */
+
+
+	//Initial RX =
+	RX = (RI*10)+RJ;
+
+	currentKeys[ 0 ] = RX;
+	RJ++;
+
+	if( RJ == 4 )
+	{
+			
+		RJ = 0;
+		RI ++;
+		
+		if( RI == 4 ){
+			RI = 1;
+		}
+
+		RX = (RI*10)+RJ;
+		currentKeys[ 1 ] = RX;
+
+	}
+	else{
+		currentKeys[ 1 ] = RX+1;
+	}
+
+
+/**
+ *
  * TRANSPOSITION
  *
  */
@@ -180,8 +229,8 @@ int main(int argc, char const *argv[])
  */
 
  	// Current keys will be changed Round by Round
-	 	currentKeys[0] = 10;
-	 	currentKeys[1] = 11;
+
+
 		M = 26;
 
 			printf("\n");
@@ -247,9 +296,9 @@ int main(int argc, char const *argv[])
 				shiftMargin++;
 			}
 		}
+
 	showInt4x4( text );
-	printf("\n");
-	
+	printf("\n");	
 	showInt4x4( charStatus );
 
 	return 0;
