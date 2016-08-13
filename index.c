@@ -6,6 +6,10 @@ char k2[] = "95EFFBE191E22DB4";
 char k3[] = "9CC98A29456677A6";
 
 int key1[4][4], key2[4][4], key3[4][4];
+
+int key10[4][4], key11[4][4], key12[4][4], key13[4][4];
+int key20[4][4], key21[4][4], key22[4][4], key23[4][4];
+int key30[4][4], key31[4][4], key32[4][4], key33[4][4];
 int zigZagIndex[4][4];
 
 char plainText[] = "ASDF48723498";
@@ -40,6 +44,43 @@ int main(int argc, char const *argv[])
 				key1 [ti][tj] = toAZindex( k1[i] );
 				key2 [ti][tj] = toAZindex( k2[i] );
 				key3 [ti][tj] = toAZindex( k3[i] );
+		}
+
+
+
+
+
+	/**
+	 * Expand keys 
+	 * Key1 is expanded into key 10 , key 11 , key 12 , k 13..
+	 * by shifthing each row..
+	 */
+
+		for ( i = 0; i < 4; i++)
+		{
+			for ( j = 0; j < 4; j++)
+			{
+				ix1 = (j+i)%4;
+				ix2 = (j+i+1)%4;
+				ix3 = (j+i+2)%4;
+				ix4 = (j+i+3)%4;
+
+				key10[i][j] = key1[i][ ix1 ];
+				key11[i][j] = key1[i][ ix2 ];
+				key12[i][j] = key1[i][ ix3 ];
+				key13[i][j] = key1[i][ ix4 ];
+
+				key20[i][j] = key2[i][ ix1 ];
+				key21[i][j] = key2[i][ ix2 ];
+				key22[i][j] = key2[i][ ix3 ];
+				key23[i][j] = key2[i][ ix4 ];
+
+				key30[i][j] = key3[i][ ix1 ];
+				key31[i][j] = key3[i][ ix2 ];
+				key32[i][j] = key3[i][ ix3 ];
+				key33[i][j] = key3[i][ ix4 ];
+			}
+
 		}
 
 
