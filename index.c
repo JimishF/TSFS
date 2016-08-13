@@ -69,10 +69,11 @@ int main(int argc, char const *argv[])
 		{
 			for ( j = 0; j < 4; j++)
 			{
-				ix1 = (j+i)%4;
-				ix2 = (j+i+1)%4;
-				ix3 = (j+i+2)%4;
-				ix4 = (j+i+3)%4;
+				// Shifting index
+				ix1 = (j+i)%4; 		//Shift 1
+				ix2 = (j+i+1)%4; 	//Shift 2
+				ix3 = (j+i+2)%4; 	//Shift 3
+				ix4 = (j+i+3)%4; 	//Shift 4
 
 				for( k = 1; k <=3 ; k++){
 					kx10 = k*10;
@@ -112,17 +113,8 @@ int main(int argc, char const *argv[])
 
 		}
 
+	show4x4( key[21] );
 
-
-
-	for ( i = 0; i < 4; i++)
-	{
-		for ( j = 0; j < 4; j++)
-		{
-			printf("%d\t", key[31][i][j]);
-		}
-		printf("\n");
-	}
 	return 0;
 }
 
