@@ -49,10 +49,11 @@ char plainText[] = "ASDF48723498";
 // * initailezd with PT
 int text[4][4];
 int currentKeys[2];
+int charStatus [4][4];
 
 int main(int argc, char const *argv[])
 {	
-	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi, position, tmp[4][4];
+	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi, position, tempInt;
 	d = 4;
 
 /**
@@ -155,7 +156,19 @@ int main(int argc, char const *argv[])
 				position = 	zigZagIndex[ i ][ j ];
 				ti = position / 4;
 				tj = position % 4;
-				text [ ti ][ tj ] = tmp[i][j];
+
+				/**
+				  * Update CharacterStatus which helps to determine in future
+				  * that whether this was character or digit
+				  */
+				  
+				if( isChar( tmp[i][j] ) ){
+					charStatus [ti][tj] = 1;
+				}else{
+					charStatus [ti][tj] = 0;
+				}
+
+				text [ ti ][ tj ] = toAZindex( tmp[i][j] );
 			}
 		}
 
@@ -165,7 +178,6 @@ int main(int argc, char const *argv[])
  * SUBSTITUTION
  *
  */
-	showInt4x4( text );
 
  	// Current keys will be changed Round by Round
 	 	currentKeys[0] = 10;
@@ -178,7 +190,7 @@ int main(int argc, char const *argv[])
 		{
 			for ( j = 0; j < 4; j++)
 			{
-								
+												
 //			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
 				text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
 			}
@@ -202,14 +214,33 @@ int main(int argc, char const *argv[])
 				position = foldingIndex[i][j];
 				ti = position / 4;
 				tj = position % 4;
-				text [ i ][ j ] = tmp[ ti ][ tj ]; 	
+				
+				text [ i ][ j ] = tmp[ ti ][ tj ]; 		
+				
+				if( charStatus [ti][tj] ){
+				// if it was character then swap its index in charStatus
+					tempInt =	charStatus [i][j];
+					charStatus [i][j] 	= charStatus [ti][tj];
+					charStatus [ti][tj] = tempInt;
+				}
+
 			}
 		}
 
 
-	
-	printf("\n");
+/**
+ *
+ * SHIFTING
+ *
+ */
+
+
+
 	showInt4x4( text );
+	printf("\n");
+	
+	showInt4x4( charStatus );
+
 	return 0;
 }
 

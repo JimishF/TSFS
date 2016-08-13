@@ -15,7 +15,21 @@ int toAZindex(char c)
 
     return c;
 }
+int toAZChar(int c)
+{
+    return (c + 65);
+}
 
+int isChar( int c ){
+
+
+        if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') )
+        {   
+          return 1;   
+        }
+       
+    return 0;
+}
 void copy4x4( int a[4][4], int b[4][4]){
     int i,j;
     for(i=0; i<4;i++)
@@ -44,7 +58,7 @@ void showInt4x4(int tmp[4][4]){
         {
             for (int j = 0; j < 4; j++)
             {
-                printf("%c\t", tmp[i][j]);
+                printf("%d\t", tmp[i][j]);
             }
             printf("\n");
         }
