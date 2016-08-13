@@ -53,7 +53,7 @@ int charStatus [4][4];
 
 int main(int argc, char const *argv[])
 {	
-	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi, position, tempInt;
+	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi, position, tempInt, shiftMargin;
 	d = 4;
 
 /**
@@ -234,8 +234,19 @@ int main(int argc, char const *argv[])
  *
  */
 
+ 		shiftMargin = 0;
 
-
+		for ( i = 0; i < 4; i++)
+		{
+			for ( j = 0; j < 4; j++)
+			{	
+				text [ i ][ j ] = ( text [ i ][ j ] - shiftMargin );
+				if( text [ i ][ j ] < 0 ){
+					text [ i ][ j ] += 26;
+				}
+				shiftMargin++;
+			}
+		}
 	showInt4x4( text );
 	printf("\n");
 	
