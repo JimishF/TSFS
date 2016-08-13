@@ -1,22 +1,31 @@
 #include <stdio.h>
 #include "helper.c"
  
-char k1[] = "66FF3CE3491C5EDA"; 
+char k1[] = "68FF3CE3491C5EDA"; 
 char k2[] = "95EFFBE191E22DB4";
 char k3[] = "9CC98A29456677A6";
 
-int key1[4][4], key2[4][4], key3[4][4];
+/**
+ *
+ *
+ *	- Needed Matrices
+ * 	int key[1][4][4], key[2][4][4], key[3][4][4];
+ * 	int key[10][4][4], key[11][4][4], key[12][4][4], key[13][4][4];
+ * 	int key[20][4][4], key[21][4][4], key[22][4][4], key[23][4][4];
+ * 	int key[30][4][4], key[31][4][4], key[32][4][4], key[33][4][4];
+ *
+ */
 
-int key10[4][4], key11[4][4], key12[4][4], key13[4][4];
-int key20[4][4], key21[4][4], key22[4][4], key23[4][4];
-int key30[4][4], key31[4][4], key32[4][4], key33[4][4];
+// *  Last index needed is "33", so size will be 33
+int key[34][4][4];
+
 int zigZagIndex[4][4];
 
 char plainText[] = "ASDF48723498";
 
 int main(int argc, char const *argv[])
 {	
-	int i, j, m, n, ti, tj, ix1, ix2, ix3, ix4, zi;
+	int i, j, m, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10, zi;
 
 	m = 4;
 /**
@@ -41,9 +50,9 @@ int main(int argc, char const *argv[])
 				ti = i / 4;
 				tj = i % 4;
 
-				key1 [ti][tj] = toAZindex( k1[i] );
-				key2 [ti][tj] = toAZindex( k2[i] );
-				key3 [ti][tj] = toAZindex( k3[i] );
+				key[1] [ti][tj] = toAZindex( k1[i] );
+				key[2] [ti][tj] = toAZindex( k2[i] );
+				key[3] [ti][tj] = toAZindex( k3[i] );
 		}
 
 
@@ -65,23 +74,20 @@ int main(int argc, char const *argv[])
 				ix3 = (j+i+2)%4;
 				ix4 = (j+i+3)%4;
 
-				key10[i][j] = key1[i][ ix1 ];
-				key11[i][j] = key1[i][ ix2 ];
-				key12[i][j] = key1[i][ ix3 ];
-				key13[i][j] = key1[i][ ix4 ];
+				for( k = 1; k <=3 ; k++){
+					kx10 = k*10;
 
-				key20[i][j] = key2[i][ ix1 ];
-				key21[i][j] = key2[i][ ix2 ];
-				key22[i][j] = key2[i][ ix3 ];
-				key23[i][j] = key2[i][ ix4 ];
+					key[ (kx10)		][i][j] = key[ k ][i][ ix1 ];
+					key[ (kx10)	+ 1	][i][j] = key[ k ][i][ ix2 ];
+					key[ (kx10)	+ 2	][i][j] = key[ k ][i][ ix3 ];
+					key[ (kx10)	+ 3	][i][j] = key[ k ][i][ ix4 ];
 
-				key30[i][j] = key3[i][ ix1 ];
-				key31[i][j] = key3[i][ ix2 ];
-				key32[i][j] = key3[i][ ix3 ];
-				key33[i][j] = key3[i][ ix4 ];
+				}
+
 			}
 
 		}
+
 
 
 	/**
@@ -108,15 +114,15 @@ int main(int argc, char const *argv[])
 
 
 
-	// for ( i = 0; i < 4; i++)
-	// {
-	// 	for ( j = 0; j < 4; j++)
-	// 	{
-	// 		printf("%d\t", zigZagIndex[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
 
+	for ( i = 0; i < 4; i++)
+	{
+		for ( j = 0; j < 4; j++)
+		{
+			printf("%d\t", key[31][i][j]);
+		}
+		printf("\n");
+	}
 	return 0;
 }
 
