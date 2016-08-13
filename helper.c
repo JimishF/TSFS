@@ -15,3 +15,21 @@ int toAZindex(char c)
 
     return c;
 }
+
+
+void multiply(int a[4][4],int b[4][4],int * mult)
+{
+    int i,j,k;
+    
+    for(i=0; i<4;i++)
+    {
+        for(j=0; j<4; j++)
+        {
+            for(k=0; k<4; k++)
+            {               
+                mult[i][j]+=a[i][k]*b[k][j];
+            }
+        }
+    }
+
+}
