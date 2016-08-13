@@ -44,7 +44,7 @@ void showInt4x4(int tmp[4][4]){
         {
             for (int j = 0; j < 4; j++)
             {
-                printf("%d\t", tmp[i][j]);
+                printf("%c\t", tmp[i][j]);
             }
             printf("\n");
         }

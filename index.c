@@ -32,6 +32,14 @@ int zigZagIndex[4][4] =
 		 	{ 9, 10, 14, 15	}	
 	 	};
 
+	 	int foldingIndex[4][4] = 
+	 	{
+	 		{15, 13, 14,12},
+	 		{7,  10, 9, 4 },
+	 		{11, 6,  5, 8 },
+	 		{3,  1,  2, 0 }
+	 	};
+
 // * temporary 4x4 sometimes needed
 int tmp[4][4];
 
@@ -172,19 +180,36 @@ int main(int argc, char const *argv[])
 			{
 								
 //			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
-				// text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
-				// printf("%d \t", ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M );
-				printf("%d \t",( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ); 
-
-
+				text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
 			}
-			printf("\n");
+
 		}
-			printf("\n");
 
+
+/**
+ *
+ * FOLDING
+ *
+ */
+
+ 	// copy text into tmp
+ 	   copy4x4( tmp, text );
+
+		for ( i = 0; i < 4; i++)
+		{
+			for ( j = 0; j < 4; j++)
+			{	
+				position = foldingIndex[i][j];
+				ti = position / 4;
+				tj = position % 4;
+				text [ i ][ j ] = tmp[ ti ][ tj ]; 	
+			}
+		}
+
+
+	
+	printf("\n");
 	showInt4x4( text );
-
-
 	return 0;
 }
 
