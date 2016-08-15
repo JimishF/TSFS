@@ -5,6 +5,8 @@ char k1[] = "68FF3CE3491C5EDA";
 char k2[] = "95EFFBE191E22DB4";
 char k3[] = "9CC98A29456677A6";
 
+char plainText[] = "ASDF48723498";
+
 /**
  *
  *
@@ -20,37 +22,51 @@ char k3[] = "9CC98A29456677A6";
 int key[34][4][4];
 
 /**
- *
- * Making zigzag index array
+ * Zigzag Indexes, will be used in transposition stage
  */
 
-int zigZagIndex[4][4] = 
-		{ 
-	 		{ 0, 1,	 5,	 6	},	
-		 	{ 2, 4,	 7,	 12	},	
-		 	{ 3, 8,	 11, 13	},	
-		 	{ 9, 10, 14, 15	}	
-	 	};
+	int zigZagIndex[4][4] = 
+	{ 
+ 		{ 0, 1,	 5,	 6	},	
+	 	{ 2, 4,	 7,	 12	},	
+	 	{ 3, 8,	 11, 13	},	
+	 	{ 9, 10, 14, 15	}	
+ 	};
 
-	 	int foldingIndex[4][4] = 
-	 	{
-	 		{15, 13, 14,12},
-	 		{7,  10, 9, 4 },
-	 		{11, 6,  5, 8 },
-	 		{3,  1,  2, 0 }
-	 	};
 
-// * temporary 4x4 sometimes needed
-int tmp[4][4];
+/**
+ * Foldinng Indexes will used in folding stage
+ */
+ 	int foldingIndex[4][4] = 
+ 	{
+ 		{15, 13, 14,12},
+ 		{7,  10, 9, 4 },
+ 		{11, 6,  5, 8 },
+ 		{3,  1,  2, 0 }
+ 	};
 
-char plainText[] = "ASDF48723498";
 
 // * text 4x4, Matrix will used in every step operation
-// * initailezd with PT
+// * It will be derived from plain text string
 int text[4][4];
-int currentKeys[2];
+
+// * tmpText is also 4x4 matrix, will be used to get Old valus
+// * It is a past pf text matrix olds old indexes,
+int tmpText[4][4];
+
+
+
+// * charStatus 4x4, Matrix will have binary values that holds is that
+// 	 position should be character or digit.
+//   If ith is character charStatus [i] will be 1
 int charStatus [4][4];
-int oldCharStatus [4][4];
+// * same as tmpText, tmpCharStatus have values of old
+// 	 indexes of charStatus data
+int tmpCharStatus [4][4];
+
+// * currentKeys holds two adjacency derived keys for each round.
+int currentKeys[2];
+
 
 int main(int argc, char const *argv[])
 {	
@@ -86,17 +102,15 @@ int main(int argc, char const *argv[])
 	  * a = 0, B = 1 ... z = 25
 	  *	1 = 1 , 2 = 2, 0 = 0 
 	  */
-	 
 
 		for( i = 0; k1[i] != '\0' ; i++ ){
-			
-			/**
-			 * 1D 1x16 marrix to 2D 4x4 
-			 */
 				
 				ti = i / 4;
 				tj = i % 4;
 
+			/*
+			 * Save  main three keys in 4x4 matrix
+			 */
 				key[1] [ti][tj] = toAZindex( k1[i] );
 				key[2] [ti][tj] = toAZindex( k2[i] );
 				key[3] [ti][tj] = toAZindex( k3[i] );
@@ -116,15 +130,36 @@ int main(int argc, char const *argv[])
 		{
 			for ( j = 0; j < 4; j++)
 			{
-				// Shifting index
-				ix1 = (j+i)%4; 		//Shift 1
-				ix2 = (j+i+1)%4; 	//Shift 2
-				ix3 = (j+i+2)%4; 	//Shift 3
-				ix4 = (j+i+3)%4; 	//Shift 4
+				/**
+				 *
+				 * KEY 1 will be expanded to Key10, Key11, Key12, Key13 and so on for KEY 2 and 3.
+				 * Shifting column indexes are ix1, ix2, ix3, ix4
+				 *
+				 * 	suppose i = 0 and j = 0, then ix1 = (0+0) % 4 = 0 that means, 
+				 *	we have to save ij data at 0th column for key 10
+				 *	 ix2 =  (0+0 + 1) %4 = 1, so for key11 [i][j] data will be used is key11 [i][ 1 ],
+				 *   As we can see, index has been shifted as per algorithm
+				 *
+				 *
+				 *
+				 * 	suppose i = 0 and j = 1, then ix1 = 0+1 % 4 = 1 that means, 
+				 *	here ix1 is 1, indicates that for new jth loop, first row will be shifted left
+				 *
+				 */
+
+
+				ix1 = (j+i  )%4; 	//Shift column for index 1st key
+				ix2 = (j+i+1)%4; 	//Shift column for index 2nd key
+				ix3 = (j+i+2)%4; 	//Shift column for index 3rd key
+				ix4 = (j+i+3)%4; 	//Shift column for index 4th key
 
 				for( k = 1; k <=3 ; k++){
+
+					// suppose kx10 = 1*10 = 10
 					kx10 = k*10;
 
+					// * ...then keys will be generated are..
+					//		k[ 10 ], k[ 10 +1 ], k[ 10 +2 ] , k[ 10 +3 ] 
 					key[ (kx10)		][i][j] = key[ k ][i][ ix1 ];
 					key[ (kx10)	+ 1	][i][j] = key[ k ][i][ ix2 ];
 					key[ (kx10)	+ 2	][i][j] = key[ k ][i][ ix3 ];
@@ -194,11 +229,11 @@ for( round = 0; round < 12; round ++ )
 	 *
 	 */
 
-	 		copy4x4( tmp, text );
+	 		copy4x4( tmpText, text );
 
 	 		if( round != 0)
 	 		{
-	 			copy4x4( oldCharStatus, charStatus);
+	 			copy4x4( tmpCharStatus, charStatus);
 	 		}
 
 	 		for ( i = 0; i < 4; i++)
@@ -212,18 +247,18 @@ for( round = 0; round < 12; round ++ )
 					tj = position % 4;
 					
 					if( round == 0 ){
-						if(isChar(tmp[i][j]) )
+						if(isChar(tmpText[i][j]) )
 						{
 							charStatus[ ti ][ tj ] = 1;
-							text [ ti ][ tj ] = toAZindex( tmp[i][j] );
+							text [ ti ][ tj ] = toAZindex( tmpText[i][j] );
 						}
 						else{
-							text [ ti ][ tj ] =  tmp[i][j] ;
+							text [ ti ][ tj ] =  tmpText[i][j] ;
 						}
 
 					}else{
-						text [ ti ][ tj ] 		=   tmp[i][j];
-						charStatus[ ti ][ tj ] 	= 	oldCharStatus[ i ][ j ];
+						text [ ti ][ tj ] 		=   tmpText[i][j];
+						charStatus[ ti ][ tj ] 	= 	tmpCharStatus[ i ][ j ];
 					}
 
 				}
@@ -256,12 +291,10 @@ for( round = 0; round < 12; round ++ )
 	 *
 	 */
 
-	 	// copy text into tmp
-	 	   copy4x4( tmp, text );
- 		   copy4x4( oldCharStatus, charStatus );
+	 	// copy text into tmpText& charStatus to tmpCharStatus
+	 	   copy4x4( tmpText, text );
+ 		   copy4x4( tmpCharStatus, charStatus );
 	 		
-
-// showInt4x4( charStatus );
 			for ( i = 0; i < 4; i++)
 			{
 				for ( j = 0; j < 4; j++)
@@ -273,13 +306,14 @@ for( round = 0; round < 12; round ++ )
 					tj = position % 4;
 					
 					// save that value at current position
-					text [ ti ][ tj ] = tmp[ i ][ j ]; 		
-					charStatus [ ti ][ tj ] = oldCharStatus[ i ][ j ]; 		
+					text [ ti ][ tj ] = tmpText[ i ][ j ]; 		
+					charStatus [ ti ][ tj ] = tmpCharStatus[ i ][ j ]; 		
 				
 
 				}
 			}
-// showInt4x4( charStatus );
+
+
 
 
 	/**
@@ -304,13 +338,13 @@ for( round = 0; round < 12; round ++ )
 			}
 
 	
+}
+
 	printf("\n\n");
 	showInt4x4( text );
 	printf("\n");
 	showInt4x4( charStatus );
 	
-}
-
 
 	return 0;
 }
