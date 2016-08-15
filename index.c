@@ -50,7 +50,7 @@ int key[34][4][4];
 // * It will be derived from plain text string
 int text[4][4];
 
-// * tmpText is also 4x4 matrix, will be used to get Old valus
+// * tmpText is also 4x4 matrix, will be used to get Old values.
 // * It is a past pf text matrix olds old indexes,
 int tmpText[4][4];
 
@@ -58,7 +58,7 @@ int tmpText[4][4];
 
 // * charStatus 4x4, Matrix will have binary values that holds is that
 // 	 position should be character or digit.
-//   If ith is character charStatus [i] will be 1
+//   If i th data is character charStatus [i] will be 1
 int charStatus [4][4];
 // * same as tmpText, tmpCharStatus have values of old
 // 	 indexes of charStatus data
@@ -80,7 +80,7 @@ int main(int argc, char const *argv[])
 /**
  *
  * PlainText to 2D Array;
- * Currently taking PT.lngth < 16  
+ * Currently taking PT.length < 16  
  *
  */
 	for ( i = 0; plainText[i] != '\0'; i++)
@@ -107,6 +107,7 @@ int main(int argc, char const *argv[])
 				
 				ti = i / 4;
 				tj = i % 4;
+				unnecessary 
 
 			/*
 			 * Save  main three keys in 4x4 matrix
@@ -123,7 +124,7 @@ int main(int argc, char const *argv[])
 	/**
 	 * Expand keys 
 	 * Key1 is expanded into key 10 , key 11 , key 12 , k 13..
-	 * by shifthing each row..
+	 * by shifting each row..
 	 */
 
 		for ( i = 0; i < 4; i++)
@@ -143,7 +144,7 @@ int main(int argc, char const *argv[])
 				 *
 				 *
 				 * 	suppose i = 0 and j = 1, then ix1 = 0+1 % 4 = 1 that means, 
-				 *	here ix1 is 1, indicates that for new jth loop, first row will be shifted left
+				 *	here ix1 is 1, indicates that for new j th loop, first row will be shifted left
 				 *
 				 */
 
@@ -176,7 +177,7 @@ for( round = 0; round < 12; round ++ )
 {
 
 	/*==================================================================
-	=			      Algo Starts (1 itteration of TSFS)		  	   =
+	=			      Algo. Starts (1 iteration of TSFS)		  	   =
 	==================================================================*/
 
 	/**
@@ -193,7 +194,7 @@ for( round = 0; round < 12; round ++ )
 	 *	to do so, set RJ = 0 & RI ++;
 	 *	and recalculate : (RI*10)+RJ = (2*10)+0 = 20
 	 * --------------
-	 * 	In case of Last round, we will neec next key = 10
+	 * 	In case of Last round, we will need next key = 10
 	 *  For that We will just ReInitialize RI to 0
 	 *
 	 */
@@ -229,6 +230,7 @@ for( round = 0; round < 12; round ++ )
 	 *
 	 */
 
+	 		//  Initially copy tmpText  
 	 		copy4x4( tmpText, text );
 
 	 		if( round != 0)
@@ -240,8 +242,8 @@ for( round = 0; round < 12; round ++ )
 			{
 				for ( j = 0; j < 4; j++)
 				{
-					// Positiom represents which index element should be here at I J
-					// It fetches from zigZagIndex martix 
+					// Position represents which index element should be here at I J
+					// It fetches from zigZagIndex matrix 
 					position = 	zigZagIndex[ i ][ j ];
 					ti = position / 4;
 					tj = position % 4;
@@ -329,10 +331,6 @@ for( round = 0; round < 12; round ++ )
 				for ( j = 0; j < 4; j++)
 				{	
 					text [ i ][ j ] = ( text [ i ][ j ] + (26- shiftMargin) ) %26;
-					
-					// if( text [ i ][ j ] < 0 ){
-					// 	text [ i ][ j ] += 26;
-					// }
 					shiftMargin++;
 				}
 			}
