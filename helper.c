@@ -54,12 +54,24 @@ void multiply(int mult[4][4], int a[4][4],int b[4][4])
 
 
 void showInt4x4(int tmp[4][4]){
-        for (int i = 0; i < 4; i++)
+        int i,j;
+        for ( i = 0; i < 4; i++)
         {
-            for (int j = 0; j < 4; j++)
+            for ( j = 0; j < 4; j++)
             {
                 printf("%d\t", tmp[i][j]);
             }
             printf("\n");
+        }
+}
+
+void zeros(int tmp[4][4]){
+         int i,j;
+        for ( i = 0; i < 4; i++)
+        {
+            for ( j = 0; j < 4; j++)
+            {
+                tmp[i][j]   = 0;
+            }
         }
 }

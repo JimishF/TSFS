@@ -50,11 +50,12 @@ char plainText[] = "ASDF48723498";
 int text[4][4];
 int currentKeys[2];
 int charStatus [4][4];
+int oldCharStatus [4][4];
 
 int main(int argc, char const *argv[])
 {	
 	int i, j, d, M, n, ti, tj, ix1, ix2, ix3, ix4, k, kx10;
-	int zi, position, tempInt, shiftMargin, RI, RJ, RX;
+	int zi, position, tempInt, shiftMargin, RI, RJ, RX, round;
 	
 	d = 4;
 	RI = 1; RJ = 0;
@@ -136,170 +137,180 @@ int main(int argc, char const *argv[])
 		}
 
 
-	 
+for( round = 0; round < 12; round ++ )	 
+{
 
-	
-/*==================================================================
-=			      Algo Starts (1 itteration of TSFS)		  	   =
-==================================================================*/
+	/*==================================================================
+	=			      Algo Starts (1 itteration of TSFS)		  	   =
+	==================================================================*/
 
-/**
- *
- * GET TWO KEYS SHOULD BE USED IN THIS ROUND
- * ---------------------------------------------
- * 	initial RI =1 & RJ = 0'
- *	RX will be 1*10 +0 = 10
- * 	cunrrentKeys should be taken as 10 & RX+1 = 11
- * --------------
- *	In other case if RJ == 4 && RI = 1 then 
- *	Current key will be fine but 
- *	Next key must be taken as 20
- *	to do so, set RJ = 0 & RI ++;
- *	and recalculate : (RI*10)+RJ = (2*10)+0 = 20
- * --------------
- * 	In case of Last round, we will neec next key = 10
- *  For that We will just ReInitialize RI to 0
- *
- */
+	/**
+	 *
+	 * GET TWO KEYS SHOULD BE USED IN THIS ROUND
+	 * ---------------------------------------------
+	 * 	initial RI =1 & RJ = 0'
+	 *	RX will be 1*10 +0 = 10
+	 * 	cunrrentKeys should be taken as 10 & RX+1 = 11
+	 * --------------
+	 *	In other case if RJ == 4 && RI = 1 then 
+	 *	Current key will be fine but 
+	 *	Next key must be taken as 20
+	 *	to do so, set RJ = 0 & RI ++;
+	 *	and recalculate : (RI*10)+RJ = (2*10)+0 = 20
+	 * --------------
+	 * 	In case of Last round, we will neec next key = 10
+	 *  For that We will just ReInitialize RI to 0
+	 *
+	 */
 
-
-	//Initial RX =
-	RX = (RI*10)+RJ;
-
-	currentKeys[ 0 ] = RX;
-	RJ++;
-
-	if( RJ == 4 )
-	{
-			
-		RJ = 0;
-		RI ++;
-		
-		if( RI == 4 ){
-			RI = 1;
-		}
 
 		RX = (RI*10)+RJ;
-		currentKeys[ 1 ] = RX;
 
-	}
-	else{
-		currentKeys[ 1 ] = RX+1;
-	}
+		currentKeys[ 0 ] = RX;
+		RJ++;
 
-
-/**
- *
- * TRANSPOSITION
- *
- */
-
- 		copy4x4( tmp, text );
-
- 		for ( i = 0; i < 4; i++)
+		if( RJ == 4 )
 		{
-			for ( j = 0; j < 4; j++)
-			{
-				// Positiom represents which index element should be here at I J
-				// It fetches from zigZagIndex martix 
-				position = 	zigZagIndex[ i ][ j ];
-				ti = position / 4;
-				tj = position % 4;
-
-				/**
-				  * Update CharacterStatus which helps to determine in future
-				  * that whether this was character or digit
-				  */
-				  
-				if( isChar( tmp[i][j] ) ){
-					charStatus [ti][tj] = 1;
-				}else{
-					charStatus [ti][tj] = 0;
-				}
-
-				text [ ti ][ tj ] = toAZindex( tmp[i][j] );
-			}
-		}
-
-
-/**
- *
- * SUBSTITUTION
- *
- */
-
- 	// Current keys will be changed Round by Round
-
-
-		M = 26;
-
-			printf("\n");
-
- 		for ( i = 0; i < 4; i++)
-		{
-			for ( j = 0; j < 4; j++)
-			{
-												
-//			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
-				text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
-			}
-
-		}
-
-
-/**
- *
- * FOLDING
- *
- */
-
- 	// copy text into tmp
- 	   copy4x4( tmp, text );
-
-		for ( i = 0; i < 4; i++)
-		{
-			for ( j = 0; j < 4; j++)
-			{	
-				position = foldingIndex[i][j];
-				ti = position / 4;
-				tj = position % 4;
 				
-				text [ i ][ j ] = tmp[ ti ][ tj ]; 		
+			RJ = 0;
+			RI ++;
+			
+			if( RI == 4 ){
+				RI = 1;
+			}
+
+			RX = (RI*10)+RJ;
+			currentKeys[ 1 ] = RX;
+
+		}
+		else{
+			currentKeys[ 1 ] = RX+1;
+		}
+
+
+	/**
+	 *
+	 * TRANSPOSITION
+	 *
+	 */
+
+	 		copy4x4( tmp, text );
+
+	 		if( round != 0)
+	 		{
+	 			copy4x4( oldCharStatus, charStatus);
+	 		}
+
+	 		for ( i = 0; i < 4; i++)
+			{
+				for ( j = 0; j < 4; j++)
+				{
+					// Positiom represents which index element should be here at I J
+					// It fetches from zigZagIndex martix 
+					position = 	zigZagIndex[ i ][ j ];
+					ti = position / 4;
+					tj = position % 4;
+					
+					if( round == 0 ){
+						if(isChar(tmp[i][j]) )
+						{
+							charStatus[ ti ][ tj ] = 1;
+							text [ ti ][ tj ] = toAZindex( tmp[i][j] );
+						}
+						else{
+							text [ ti ][ tj ] =  tmp[i][j] ;
+						}
+
+					}else{
+						text [ ti ][ tj ] 		=   tmp[i][j];
+						charStatus[ ti ][ tj ] 	= 	oldCharStatus[ i ][ j ];
+					}
+
+				}
+			}
+
+
+	/**
+	 *
+	 * SUBSTITUTION
+	 *
+	 */
+
+			M = 26;
+
+	 		for ( i = 0; i < 4; i++)
+			{
+				for ( j = 0; j < 4; j++)
+				{
+													
+	//			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
+					text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
+				}
+
+			}
+
+			
+	/**
+	 *
+	 * FOLDING
+	 *
+	 */
+
+	 	// copy text into tmp
+	 	   copy4x4( tmp, text );
+ 		   copy4x4( oldCharStatus, charStatus );
+	 		
+
+// showInt4x4( charStatus );
+			for ( i = 0; i < 4; i++)
+			{
+				for ( j = 0; j < 4; j++)
+				{	
+					//Fetch folding position of data should be here
+					position = foldingIndex[i][j];
+					// get i j value of that position
+					ti = position / 4;
+					tj = position % 4;
+					
+					// save that value at current position
+					text [ ti ][ tj ] = tmp[ i ][ j ]; 		
+					charStatus [ ti ][ tj ] = oldCharStatus[ i ][ j ]; 		
 				
-				if( charStatus [ti][tj] ){
-				// if it was character then swap its index in charStatus
-					tempInt =	charStatus [i][j];
-					charStatus [i][j] 	= charStatus [ti][tj];
-					charStatus [ti][tj] = tempInt;
+
 				}
-
 			}
-		}
+// showInt4x4( charStatus );
 
 
-/**
- *
- * SHIFTING
- *
- */
+	/**
+	 *
+	 * SHIFTING
+	 *
+	 */
 
- 		shiftMargin = 0;
+	 		shiftMargin = 0;
 
-		for ( i = 0; i < 4; i++)
-		{
-			for ( j = 0; j < 4; j++)
-			{	
-				text [ i ][ j ] = ( text [ i ][ j ] - shiftMargin );
-				if( text [ i ][ j ] < 0 ){
-					text [ i ][ j ] += 26;
+			for ( i = 0; i < 4; i++)
+			{
+				for ( j = 0; j < 4; j++)
+				{	
+					text [ i ][ j ] = ( text [ i ][ j ] + (26- shiftMargin) ) %26;
+					
+					// if( text [ i ][ j ] < 0 ){
+					// 	text [ i ][ j ] += 26;
+					// }
+					shiftMargin++;
 				}
-				shiftMargin++;
 			}
-		}
 
+	
+	printf("\n\n");
 	showInt4x4( text );
-	printf("\n");	
+	printf("\n");
 	showInt4x4( charStatus );
+	
+}
+
 
 	return 0;
 }
