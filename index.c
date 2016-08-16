@@ -27,8 +27,8 @@ int key[34][4][4];
 
 	int zigZagIndex[4][4] = 
 	{ 
- 		{ 0, 1,	 5,	 6	},	
-	 	{ 2, 4,	 7,	 12	},	
+ 		{ 0, 1,	 5,	 6  },	
+	 	{ 2, 4,	 7,  12 },	
 	 	{ 3, 8,	 11, 13	},	
 	 	{ 9, 10, 14, 15	}	
  	};
@@ -107,7 +107,6 @@ int main(int argc, char const *argv[])
 				
 				ti = i / 4;
 				tj = i % 4;
-				unnecessary 
 
 			/*
 			 * Save  main three keys in 4x4 matrix
@@ -336,13 +335,13 @@ for( round = 0; round < 12; round ++ )
 			}
 
 	
-}
-
 	printf("\n\n");
 	showInt4x4( text );
 	printf("\n");
 	showInt4x4( charStatus );
 	
+}
+
 
 	return 0;
 }
