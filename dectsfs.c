@@ -7,23 +7,7 @@ char k3[] = "9CC98A29456677A6";
 
 char plainText[] = "ASDF48723498";
 
-/**
- *
- *
- *	- Needed Matrices
- * 	 key[ 1  ][4][4], key[ 2  ][4][4], key[ 3  ][4][4];
- * 	 key[ 10 ][4][4], key[ 11 ][4][4], key[ 12 ][4][4], key[ 13 ][4][4];
- * 	 key[ 20 ][4][4], key[ 21 ][4][4], key[ 22 ][4][4], key[ 23 ][4][4];
- * 	 key[ 30 ][4][4], key[ 31 ][4][4], key[ 32 ][4][4], key[ 33 ][4][4];
- *
- */
-
-// *  Last index needed is "33", so size will be 33
 int key[34][4][4];
-
-/**
- * Zigzag Indexes, will be used in transposition stage
- */
 
 	int zigZagIndex[4][4] = 
 	{ 
@@ -48,7 +32,13 @@ int key[34][4][4];
 
 // * text 4x4, Matrix will used in every step operation
 // * It will be derived from plain text string
-int text[4][4];
+int text[4][4] =
+	{ 
+ 		{21, 2,	20,	21	},
+		{7,	22,	9,	19	},
+		{11, 7, 15, 2	},
+		{2, 18, 4, 	21	}
+ 	};
 
 // * tmpText is also 4x4 matrix, will be used to get Old values.
 // * It is a past pf text matrix olds old indexes,
@@ -59,7 +49,13 @@ int tmpText[4][4];
 // * charStatus 4x4, Matrix will have binary values that holds is that
 // 	 position should be character or digit.
 //   If i th data is character charStatus [i] will be 1
-int charStatus [4][4];
+int charStatus [4][4] = {
+	{1,0,0,0},
+	{1,1,0,0},
+	{0,1,0,0},
+	{0,0,0,0}
+
+};
 // * same as tmpText, tmpCharStatus have values of old
 // 	 indexes of charStatus data
 int tmpCharStatus [4][4];
@@ -77,18 +73,18 @@ int main(int argc, char const *argv[])
 	RI = 1; RJ = 0;
 
 
-/**
- *
- * PlainText to 2D Array;
- * Currently taking PT.length < 16  
- *
- */
-	for ( i = 0; plainText[i] != '\0'; i++)
-	{
-		ti = i / 4;
-		tj = i % 4;
-		text[ ti ][ tj ] = 	plainText[i];
-	}
+// /**
+//  *
+//  * PlainText to 2D Array;
+//  * Currently taking PT.length < 16  
+//  *
+//  */
+// 	for ( i = 0; plainText[i] != '\0'; i++)
+// 	{
+// 		ti = i / 4;
+// 		tj = i % 4;
+// 		text[ ti ][ tj ] = 	plainText[i];
+// 	}
 
 
 /**
@@ -171,10 +167,13 @@ int main(int argc, char const *argv[])
 
 		}
 
+		// displayKeys( key );
 
-for( round = 0; round < 12; round ++ )	 
+
+for( round = 11; round >=0 ; round --)	 
 {
 
+	printf("\n\n** ROUND ** %d \n",round+1 );
 	/*==================================================================
 	=			      Algo. Starts (1 iteration of TSFS)		  	   =
 	==================================================================*/
@@ -201,91 +200,47 @@ for( round = 0; round < 12; round ++ )
 
 		RX = (RI*10)+RJ;
 
-		currentKeys[ 0 ] = RX;
-		RJ++;
+		currentKeys[ 1 ] = RX;
+		RJ--;
 
-		if( RJ == 4 )
+		if( RJ == -1 )
 		{
-				
-			RJ = 0;
-			RI ++;
+
+			RJ = 3;
+			RI --;
 			
-			if( RI == 4 ){
-				RI = 1;
+			if( RI == 0 ){
+				RI = 3;
 			}
-
+			// printf("%d\n",RI );
 			RX = (RI*10)+RJ;
-			currentKeys[ 1 ] = RX;
-
+			currentKeys[ 0 ] = RX;
 		}
 		else{
-			currentKeys[ 1 ] = RX+1;
+			currentKeys[ 0 ] = RX-1;
 		}
 
 
 	/**
 	 *
-	 * TRANSPOSITION
+	 * SHIFTING
 	 *
 	 */
 
-	 		//  Initially copy tmpText  
-	 		copy4x4( tmpText, text );
+	 		shiftMargin = 0;
 
-	 		if( round != 0)
-	 		{
-	 			copy4x4( tmpCharStatus, charStatus);
-	 		}
-
-	 		for ( i = 0; i < 4; i++)
+			for ( i = 0; i < 4; i++)
 			{
 				for ( j = 0; j < 4; j++)
-				{
-					// Position represents which index element should be here at I J
-					// It fetches from zigZagIndex matrix 
-					position = 	zigZagIndex[ i ][ j ];
-					ti = position / 4;
-					tj = position % 4;
-					
-					if( round == 0 ){
-						if(isChar(tmpText[i][j]) )
-						{
-							charStatus[ ti ][ tj ] = 1;
-							text [ ti ][ tj ] = toAZindex( tmpText[i][j] );
-						}
-						else{
-							text [ ti ][ tj ] =  tmpText[i][j] ;
-						}
-
-					}else{
-						text [ ti ][ tj ] 		=   tmpText[i][j];
-						charStatus[ ti ][ tj ] 	= 	tmpCharStatus[ i ][ j ];
-					}
-
+				{	
+					text [ i ][ j ] = ( text [ i ][ j ] + shiftMargin ) %26;
+					shiftMargin++;
 				}
 			}
 
+		// showChar4x4( text, charStatus );
+		// break;
 
-	/**
-	 *
-	 * SUBSTITUTION
-	 *
-	 */
-
-			M = 26;
-
-	 		for ( i = 0; i < 4; i++)
-			{
-				for ( j = 0; j < 4; j++)
-				{
-													
-	//			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
-					text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
-				}
-
-			}
-
-			
 	/**
 	 *
 	 * FOLDING
@@ -313,35 +268,72 @@ for( round = 0; round < 12; round ++ )
 
 				}
 			}
-
-
-
-
+		
+		// showChar4x4( text, charStatus );
+		// break;
 	/**
 	 *
-	 * SHIFTING
+	 * SUBSTITUTION
 	 *
 	 */
 
-	 		shiftMargin = 0;
+			M = 26;
 
-			for ( i = 0; i < 4; i++)
+	 		for ( i = 0; i < 4; i++)
 			{
 				for ( j = 0; j < 4; j++)
-				{	
-					text [ i ][ j ] = ( text [ i ][ j ] + (26- shiftMargin) ) %26;
-					shiftMargin++;
+				{
+													
+	//			>> 	P(x)			   = ( ( ( c 							- k2 		 ) mod M  ) - k1						) mod M				
+					// printf("%d = ",text[i][j] );				
+					text [ i ][ j ] = ( ( (  text[i][j] + (26- key[ currentKeys[1] ][i][j]) ) % M ) + (26-  key[ currentKeys[0] ][i][j]) ) % M ; 
+					// printf("%d \t",text[i][j] );				
+
+				}
+				// printf("\n");
+
+			}
+		// showChar4x4( text, charStatus );
+		// break;
+
+	/**
+	 *
+	 * TRANSPOSITION
+	 *
+	 */
+
+	 		//  Initially copy tmpText  
+	 		copy4x4( tmpText, text );
+ 			copy4x4( tmpCharStatus, charStatus);
+	 
+
+	 		for ( i = 0; i < 4; i++)
+			{
+				for ( j = 0; j < 4; j++)
+				{
+					// Position represents which index element should be here at I J
+					// It fetches from zigZagIndex matrix 
+					position = 	zigZagIndex[ i ][ j ];
+					ti = position / 4;
+					tj = position % 4;
+					
+					text [ i ][ j ] 		=   tmpText[ti][tj] ;
+					charStatus[ i ][ j ] 	= 	tmpCharStatus[ ti ][ tj ];
+
 				}
 			}
 
-	
-	printf("\n\n");
-	showChar4x4( text,  charStatus );
-	printf("\n");
-	// showInt4x4( charStatus );
+		// break;
+		showChar4x4( text, charStatus );
+		
 	
 }
 
+	
+	// showInt4x4( text );
+	// printf("\n");
+	showChar4x4InSequence( text,charStatus);
+	// showInt4x4( charStatus );
 
 	return 0;
 }
