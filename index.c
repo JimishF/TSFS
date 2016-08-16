@@ -362,15 +362,9 @@ for( round = 0; round < 12; round ++ )
 		// 	break;	
 		// }
 	
-<<<<<<< HEAD
 	printf("\n\n");
 	showChar4x4( text,  charStatus );
 	printf("\n");
-=======
-	// printf("\n\n");
-	showInt4x4( text );
-	// printf("\n");
->>>>>>> 3ac5639e12028ba5135eed54c27559737130ca95
 	// showInt4x4( charStatus );
 	
 }
