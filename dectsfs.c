@@ -332,7 +332,11 @@ for( round = 11; round >=0 ; round --)
 	
 	// showInt4x4( text );
 	// printf("\n");
+<<<<<<< HEAD
 	showChar4x4InSequence( text,charStatus);
+=======
+	showChar4x4InSequence( text, charStatus );
+>>>>>>> 3ac5639e12028ba5135eed54c27559737130ca95
 	// showInt4x4( charStatus );
 
 	return 0;

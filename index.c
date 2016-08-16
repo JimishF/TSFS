@@ -171,10 +171,13 @@ int main(int argc, char const *argv[])
 
 		}
 
+		displayKeys( key );
+
 
 for( round = 0; round < 12; round ++ )	 
 {
 
+	printf("\n\n** ROUND ** %d \n",round+1 );
 	/*==================================================================
 	=			      Algo. Starts (1 iteration of TSFS)		  	   =
 	==================================================================*/
@@ -223,6 +226,10 @@ for( round = 0; round < 12; round ++ )
 		}
 
 
+
+		printf("\n * Before Transposition\n");
+		showChar4x4( text ,charStatus);
+	
 	/**
 	 *
 	 * TRANSPOSITION
@@ -251,20 +258,25 @@ for( round = 0; round < 12; round ++ )
 						if(isChar(tmpText[i][j]) )
 						{
 							charStatus[ ti ][ tj ] = 1;
-							text [ ti ][ tj ] = toAZindex( tmpText[i][j] );
+							text [ ti ][ tj ] = toAZindex( tmpText[i][j] );	
 						}
 						else{
-							text [ ti ][ tj ] =  tmpText[i][j] ;
+							text [ ti ][ tj ] = toAZindex(  tmpText[i][j] ) ;
 						}
 
 					}else{
-						text [ ti ][ tj ] 		=   tmpText[i][j];
+						text [ ti ][ tj ] 		=   toAZindex( tmpText[i][j] );
 						charStatus[ ti ][ tj ] 	= 	tmpCharStatus[ i ][ j ];
 					}
 
 				}
 			}
 
+
+			printf("\n * After Transposition & Before SUBSTITUTION\n");
+			showChar4x4( text,charStatus );
+		
+		// showInt4x4( charStatus );
 
 	/**
 	 *
@@ -281,11 +293,16 @@ for( round = 0; round < 12; round ++ )
 													
 	//			>> 	E(x)			= (	( ( k1 							+ p 	  ) mod M  ) + k2						 ) mod M				
 					text [ i ][ j ] = ( ( ( key[ currentKeys[0] ][i][j] + text[i][j] ) % M ) + key[ currentKeys[1] ][i][j] ) % M ; 
+					// text [ i ][ j ] = ( ( (  text[i][j] - key[ currentKeys[1] ][i][j] ) % M ) -  key[ currentKeys[0] ][i][j] ) % M ; 
 				}
 
 			}
 
-			
+		printf("\n * After FOLDING & Before Shifting\n");
+		showChar4x4( text,charStatus );
+		
+		// showInt4x4( charStatus );
+		// break;	
 	/**
 	 *
 	 * FOLDING
@@ -315,7 +332,10 @@ for( round = 0; round < 12; round ++ )
 			}
 
 
-
+		printf("\n * After SUBSTITUTION & Before Foldinng\n");
+		showChar4x4( text,charStatus );
+		// showInt4x4( charStatus );
+		// break;	
 
 	/**
 	 *
@@ -334,10 +354,23 @@ for( round = 0; round < 12; round ++ )
 				}
 			}
 
+		printf("\n * After SHIFTING  ( Final for round %d )\n",round+1);
+		showChar4x4( text,charStatus );
+		
+		// if( round == 1)
+		// {
+		// 	break;	
+		// }
 	
+<<<<<<< HEAD
 	printf("\n\n");
 	showChar4x4( text,  charStatus );
 	printf("\n");
+=======
+	// printf("\n\n");
+	showInt4x4( text );
+	// printf("\n");
+>>>>>>> 3ac5639e12028ba5135eed54c27559737130ca95
 	// showInt4x4( charStatus );
 	
 }
